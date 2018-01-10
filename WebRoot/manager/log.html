@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!--[if lte IE 10]><script type="text/javascript">window.location="a-error/.html";</script><![endif]-->
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>数据执行日志</title>
+    <meta name="keywords" content="数据集成平台"/>
+    <link rel="stylesheet" type="text/css"  href="css/style.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-datetimepicker.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script src="js/manager/md5.js"></script>
+    <script src="js/manager/config.js"></script>
+    <script src="js/manager/json2.js"></script>
+
+
+    <!--时间选择器-->
+    <script src="js/bootstrap-datetimepicker.js"></script>
+    <script src="js/bootstrap-datetimepicker.zh-CN.js"></script>
+
+
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            //初始化日期插件
+            $('#searchDate').datetimepicker({
+                format: 'yyyy-mm-dd',
+                language:  'zh-CN',
+                weekStart: 1,
+                todayBtn:  1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 2,
+                minView: 4,
+                forceParse: 0,
+                pickerPosition:'bottom'//日期插件弹出的位置
+            });
+            var currentPage=1;
+            var pageSize=10;
+            querySys_sqllogs(currentPage,pageSize);
+
+            $('#pageUl').on('click','.pageBtn',function(){
+                currentPage=$(this).attr('index');
+                querySys_sqllogs(currentPage,pageSize);
+            });
+            $('#pageUl').on('click','.prevBtn',function(){
+                currentPage--;
+                querySys_sqllogs(currentPage,pageSize);
+
+            });
+            $('#pageUl').on('click','.nextBtn',function(){
+                currentPage++;
+                querySys_sqllogs(currentPage,pageSize);
+
+            });
+            $('#pageUl').on('click','#jumpBtn',function(){
+                var reg=/^[1-9]\d*$|^0$/;
+                if(reg.test($('#jumpPageText').val())==true){
+                    querySys_sqllogs($('#jumpPageText').val(),pageSize);
+                }else{
+                    alert("页码输入有误！");
+                    return false;
+                }
+
+            });
+            $('#searchBtn').click(function(){
+                querySys_sqllogs(1,pageSize);
+            });
+        });
+
+    </script>
+</head>
+<body>
+<!--line1-->
+<div class="topbar">
+    <img class="logo-img fl" src="images/logo.png" />
+    <h1 class="fl">数据集成平台</h1>
+    <div class="userexit-box fr">
+        <a href="#" class="exit-box fr" id="logout" data-toggle="modal" data-target="#logout-dialog">退出</a>
+        <a href="user-management.html" id="loginName" class="username fr">用户名称</a>
+        <a href="datasource.html" class="home-box fr">首页</a>
+    </div>
+</div>
+<div class="clean"></div>
+
+<div class="clean"></div>
+<div class="content-out">
+    <div class="content-centerB">
+        <div class="titleboxB">
+            <span class="titleword">数据执行日志</span>
+            <div class="fr text-right">
+                <form class="form-inline fl mr10">
+                    <div class="form-group">
+                        <label class="label-font14">操作对象</label>
+                        <select class="form-control" id="objects">
+                            <option value="">请选择操作对象</option>
+                            <option value="sys_datasources">sys_datasources</option>
+                            <option value="sys_entities">sys_entities</option>
+                            <option value="sys_entities">sys_members</option>
+                            <option value="sys_interfaces">sys_interfaces</option>
+                            <option value="sys_pages">sys_pages</option>
+                            <option value="sys_entities_pages">sys_entities_pages</option>
+                            <option value="sys_attributes">sys_attributes</option>
+                            <option value="sys_projects">sys_projects</option>
+                            <option value="sys_documents">sys_documents</option>
+                            <option value="sys_versions">sys_versions</option>
+                            <option value="sys_rules">sys_rules</option>
+
+                        </select>
+                    </div>
+                </form>
+
+                <form class="form-horizontal fl mr10 mt5">
+                    <fieldset>
+                        <div class="control-group">
+                            <div class="controls">
+                                <div class="input-prepend input-group">
+                                    <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                                    <input type="text" readonly="readonly" style="width: 200px" name="birthday" id="searchDate" class="form-control" value="" />
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+
+                <button type="button" class="btn btn-primary" id="searchBtn">查询</button>
+
+            </div>
+        </div>
+        <div class="part1">
+
+            <table class="table table-bordered table-hover tab-user-mana">
+                        <thead>
+                            <tr>
+                                <th>平台名称</th>
+                                <th>用户名称</th>
+                                <th>操作对象</th>
+                                <th>操作</th>
+                                <th>操作时间</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTbody">
+                            <!--<tr class="info">
+                                <td>数据平台</td>
+                                <td>admin</td>
+                                <td>智慧茸鹿养殖（数据源）</td>
+                                <td>增加</td>
+                                <td>2017/12/19 09:40</td>
+                            </tr>
+                            <tr>
+                                <td>数据平台</td>
+                                <td>admin</td>
+                                <td>智慧茸鹿养殖（数据源）</td>
+                                <td>增加</td>
+                                <td>2017/12/19 09:40</td>
+                            </tr>
+                            <tr>
+                                <td>数据平台</td>
+                                <td>admin</td>
+                                <td>智慧茸鹿养殖（数据源）</td>
+                                <td>增加</td>
+                                <td>2017/12/19 09:40</td>
+                            </tr>-->
+                        </tbody>
+                    </table>
+
+
+            <div class="col-md-12 text-center">
+                <ul class="pagination" id="pageUl">
+                    <!-- <li><a href="#">首页</a></li>
+                    <li><a href="#">上一页</a></li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li class="disabled"><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li><a href="#">6</a></li>
+                    <li><a href="#">下一页</a></li>
+                    <li><a href="#">尾页</a></li>
+
+                    <li><input type="text" class="paging-inpbox form-control"></li>
+                    <li><button type="submit" class="paging-btnbox btn btn-primary">跳转</button></li>
+                    <li><span class="number-of-pages">共9999</span></li>-->
+                </ul>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!--模态框分割线2-->
+<div class="modal fade" id="logout-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title titlewordC">退出确认</h4>
+            </div>
+            <div class="modal-body remind-bg">您确定要退出吗？</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" id="logoutBtn" class="btn btn-primary">确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</body>
+</html>
