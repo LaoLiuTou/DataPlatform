@@ -1329,7 +1329,7 @@ public class JdbcUtils {
 			ConnectPoolC3P0 cp = ConnectPoolC3P0.getInstance(dbJO.getString("dbType"),
 	        		dbJO.getString("dbHost"),dbJO.getString("dbPort"),dbJO.getString("dbName"),
 	        		dbJO.getString("dbUser"),dbJO.getString("dbPassword"));
-			String querySql = "SELECT * FROM SYS_JdbcUtilsS WHERE ID="+dat_id;
+			String querySql = "SELECT * FROM SYS_DATASOURCES WHERE ID="+dat_id;
 			List<Map<String, String>> resultMap = cp.queryForMap(c3p0Key, querySql, null);
 			if(resultMap.size()>0){
 				
@@ -1366,7 +1366,7 @@ public class JdbcUtils {
 			ConnectPoolC3P0 cp = ConnectPoolC3P0.getInstance(dbJO.getString("dbType"),
 					dbJO.getString("dbHost"),dbJO.getString("dbPort"),dbJO.getString("dbName"),
 					dbJO.getString("dbUser"),dbJO.getString("dbPassword"));
-			String querySql = "SELECT * FROM SYS_JdbcUtilsS WHERE ID="+dat_id;
+			String querySql = "SELECT * FROM SYS_DATASOURCES WHERE ID="+dat_id;
 			List<Map<String, String>> resultMap = cp.queryForMap(c3p0Key, querySql, null);
 			if(resultMap.size()>0){
 				
@@ -1406,7 +1406,7 @@ public class JdbcUtils {
 			String querySql = "SELECT * FROM SYS_ENTITIES WHERE ID="+e_id;
 			List<Map<String, String>> resultDMap = cp.queryForMap(c3p0Key, querySql, null);
 			if(resultDMap.size()>0){ 
-				querySql = "SELECT * FROM SYS_JdbcUtilsS WHERE ID="+resultDMap.get(0).get("dat_id");
+				querySql = "SELECT * FROM SYS_DATASOURCES WHERE ID="+resultDMap.get(0).get("dat_id");
 				List<Map<String, String>> resultEMap = cp.queryForMap(c3p0Key, querySql, null);
 				if(resultEMap.size()>0){ 
 					result=resultEMap.get(0).get("ds_json");
