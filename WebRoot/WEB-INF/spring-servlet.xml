@@ -3,12 +3,17 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:aop="http://www.springframework.org/schema/aop"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/aop  http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
 
         <!-- 自动扫描controller包下的所有类，使其认为是spring mvc的控制器 路径即为类路径 -->
         <context:component-scan base-package="com.lt.controller"></context:component-scan>
+        <context:component-scan base-package="com.lt.aspect"></context:component-scan>
+         <!-- 配置使Spring采用CGLIB代理 -->
+        <aop:aspectj-autoproxy proxy-target-class="true" />
 		<mvc:annotation-driven />
 
         <!-- 配置视图解析器 如何把handler 方法返回值解析为实际的物理视图  根据控制器返回的字符串拼接成jsp路径：/WEB-INF/jsp/xx.jsp -->

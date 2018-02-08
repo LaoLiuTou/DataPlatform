@@ -29,6 +29,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
  
+ 
 
 public class JdbcUtils {
 
@@ -688,7 +689,7 @@ public class JdbcUtils {
 					String countSql = "SELECT COUNT(*) FROM "+tableName+" ";
 					String querySql = "SELECT * FROM "+tableName+" ";
 					 
-					/*String countSql = "select count(ID) from JdbcUtilss where PROJECTS_ID=?,unix_timestamp(C_DT) >= unix_timestamp(?)," +
+					/*String countSql = "select count(ID) from datasources where PROJECTS_ID=?,unix_timestamp(C_DT) >= unix_timestamp(?)," +
 							"unix_timestamp(C_DT) <= unix_timestamp(?),unix_timestamp(UP_DT) >= unix_timestamp(?)," +
 							"unix_timestamp(UP_DT) <= unix_timestamp(?),DS_JSON=?,C_ID=?";*/
 					if(param!=null&&!param.equals("")){
@@ -1226,7 +1227,7 @@ public class JdbcUtils {
 					ConnectPoolC3P0 cp = ConnectPoolC3P0.getInstance(dbJO.getString("dbType"),
 							dbJO.getString("dbHost"),dbJO.getString("dbPort"),dbJO.getString("dbName"),
 							dbJO.getString("dbUser"),dbJO.getString("dbPassword"));
-					
+					logger.info("SQL:"+sql);
 					/* String sql = "delete from myuser where userID=5"; */
 					if(sql!=null&&!sql.equals("")){
 						if(type.equals("insert")){
